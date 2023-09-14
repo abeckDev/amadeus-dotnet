@@ -1,36 +1,33 @@
 name: build
 on:
   push:
-    branches: [ master ]
+    branches: [ '*' ]
   pull_request:
     branches: [ master ]
     types: [opened, synchronize, reopened]
 jobs:
   Build:
-    runs-on: [windows-latest]
+    runs-on: ubuntu-latest
+    env:
+      dotnet-version: 6.0.x
     steps:
     - uses: actions/checkout@v2
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
-    - name: Restore NuGet packages
-      run: nuget restore amadeus-csharp.sln
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.dotnet-version }}
+    - name: restore .NET dependencies
+      run: dotnet restore amadeus-csharp.sln
     - name: Build the Solution
       run: | 
-        msbuild amadeus-csharp.sln /p:platform="Any CPU" /p:Configuration=Release
-    - name: Setup VSTest
-      uses: darenm/Setup-VSTest@v1
+        dotnet build amadeus-csharp.sln --configuration Release -p:platform="Any CPU" --no-restore
     - name: Run IntegrationTests
-      run: vstest.console.exe .\amadeus-integration-test\bin\Release\netcoreapp3.1\amadeus-integration-test.dll
-      env:
-          key: ${{ secrets.NET_API_KEY }}
-          secret: ${{ secrets.NET_API_SECRET }}
-    - name: Run UnitTests
-      run: vstest.console.exe .\amadeus-test\bin\Release\netcoreapp3.1\amadeus-test.dll
+      run: dotnet test ./amadeus-integration-test/amadeus-integration-test.csproj --configuration Release -p:platform="Any CPU" --no-build --no-restore --environment key="${{ secrets.NET_API_KEY }}" --environment secret="${{ secrets.NET_API_SECRET }}"
+    - name: run UnitTests
+      run: dotnet test ./amadeus-test/amadeus-test.csproj --configuration Release -p:platform="Any CPU" --no-build --no-restore
   SonarCloud:
     name: Build SonarCloud Test
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -52,19 +49,19 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarCloud scanner
+      - name: Install SonarCloud scanner linux
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
+        shell: bash
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          mkdir -p ~/.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path ~/.sonar/scanner
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
+        shell: bash
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"amadeus4dev_amadeus-dotnet" /o:"amadeus4dev" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          nuget restore amadeus-csharp.sln
-          dotnet msbuild amadeus-csharp.sln /p:platform="Any CPU" /p:Configuration=Release
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          ./.sonar/scanner/dotnet-sonarscanner begin /k:"amadeus4dev_amadeus-dotnet" /o:"amadeus4dev" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet restore amadeus-csharp.sln
+          dotnet build amadeus-csharp.sln /p:platform="Any CPU" /p:Configuration=Release
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
