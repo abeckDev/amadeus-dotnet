@@ -31,7 +31,7 @@ namespace amadeus_integration_test
             .and("returnDate", System.DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd"))                                                                                                                                                                             
             .and("adults", "1")
             .and("max", "2"));
-            string body = "{\"data\":[" + flightOffersSearches[0].response.data[0] + "]}}";
+            string body = "{\"data\":" + flightOffersSearches[0].response.dataString + "}";
             
             SeatMap[] response = amadeus.shopping.seatmaps.postSeatMap(body);
 
