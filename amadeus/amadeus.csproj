@@ -4,7 +4,7 @@
   <TargetFramework>net8.0</TargetFramework>
     <PackageId>amadeus-dotnet</PackageId>
     <PackageVersion>30.0</PackageVersion>
-	<Version>4.0.0-preview</Version>
+	<Version>4.0.1-preview</Version>
     <Authors>amadeus4dev</Authors>
 	<Owners>amadeus4dev</Owners>
     <Company>amadeus4dev</Company>
@@ -15,11 +15,11 @@
 	<AssemblyName>amadeus-dotnet</AssemblyName>
 	<PackageProjectUrl>https://github.com/amadeus4dev/amadeus-dotnet</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/amadeus4dev/amadeus-dotnet</RepositoryUrl>
-	<PackageReleaseNotes>Updated SDK to .NET 8 and removed legacy build dependencies.</PackageReleaseNotes>
+	<PackageReleaseNotes>Updated SDK to .NET 8, removed legacy build dependencies and deprecated SafePlace API.</PackageReleaseNotes>
 	<NeutralLanguage>en</NeutralLanguage>
 	<PackageTags>netstandard2.0;csharp4.5</PackageTags>
 	<RepositoryType>GIT</RepositoryType>
-	<AssemblyVersion>4.0.0.0</AssemblyVersion>
+	<AssemblyVersion>4.0.1.0</AssemblyVersion>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

@@ -49,11 +49,6 @@ namespace amadeus
         public Booking booking;
 
         /// <summary>
-        /// A namespaced client for the <code>/v1/safety</code> endpoints.
-        /// </summary>
-        public Safety safety;
-
-        /// <summary>
         /// Initializes a new instance of the Amadeus class.
         /// </summary>
         public Amadeus() : base(null)
@@ -71,7 +66,6 @@ namespace amadeus
             this.travel = new Travel(this);
             this.shopping = new Shopping(this);
             this.booking = new Booking(this);
-            this.safety = new Safety(this);
         }
 
         /// <summary>
