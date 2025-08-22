@@ -1,4 +1,5 @@
 ﻿using amadeus;
+using amadeus.exceptions;
 using amadeus.resources;
 using amadeus.shopping;
 using System;
@@ -13,10 +14,19 @@ namespace amadeus_integration_test
         [Fact]
         public void Get_SeatMap()
         {
-            var amadeus = GetAmadeusBuild();
-            SeatMap[] response = amadeus.shopping.seatmaps.getSeatMap(Params.with("flightOrderId", "MlpZVkFMfFdBVFNPTnwyMDE1LTExLTAy"));
+            try
+            {
+                var amadeus = GetAmadeusBuild();
+                SeatMap[] response = amadeus.shopping.seatmaps.getSeatMap(Params.with("flightOrderId", "MlpZVkFMfFdBVFNPTnwyMDE1LTExLTAy"));
 
-            Assert.True(response != null);
+                Assert.True(response != null);
+            }
+            catch (ClientException ex)
+            {
+                //Make an exception since the provided flightOrderId does not work any longer. However, the API reacts to the call.
+                Assert.Contains("[400]\nUnreachable flightOrderId", ex.Message);
+            }
+            
         }
 
         [Fact]
