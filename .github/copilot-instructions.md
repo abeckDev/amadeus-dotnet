@@ -1,6 +1,6 @@
 # Amadeus .NET SDK
 
-Amadeus .NET SDK is a C# library that provides access to the Amadeus Self-Service travel APIs. It targets .NET 6.0 and is distributed as a NuGet package.
+Amadeus .NET SDK is a C# library that provides access to the Amadeus Self-Service travel APIs. It targets .NET 8.0 LTS and is distributed as a NuGet package.
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
@@ -26,15 +26,9 @@ Always reference these instructions first and fallback to search or bash command
 - Then run standard build commands above
 
 ### .NET Runtime Requirements:
-- Project targets .NET 6.0 but is compatible with .NET 8.0
-- **If tests fail with "Framework 'Microsoft.NETCore.App', version '6.0.0'" error**, update the TargetFramework in ALL .csproj files:
-  ```bash
-  sed -i 's|<TargetFramework>net6.0</TargetFramework>|<TargetFramework>net8.0</TargetFramework>|g' amadeus/amadeus.csproj
-  sed -i 's|<TargetFramework>net6.0</TargetFramework>|<TargetFramework>net8.0</TargetFramework>|g' amadeus-test/amadeus-test.csproj
-  sed -i 's|<TargetFramework>net6.0</TargetFramework>|<TargetFramework>net8.0</TargetFramework>|g' amadeus-integration-test/amadeus-integration-test.csproj
-  sed -i 's|<TargetFramework>net6.0</TargetFramework>|<TargetFramework>net8.0</TargetFramework>|g' sample/sample.csproj
-  ```
-- Then re-run `dotnet restore` and subsequent build commands
+- Project targets .NET 8.0 LTS
+- All projects have been upgraded to target .NET 8.0 for long-term support
+- Build process is optimized for .NET 8.0 runtime
 
 ## Validation
 
@@ -68,9 +62,9 @@ Always reference these instructions first and fallback to search or bash command
 
 ### Common build issues and solutions:
 1. **"mono command not found" OR "docfx.exe exited with code 1"**: Comment out docfx.console package reference in `amadeus/amadeus.csproj` (see instructions above)
-2. **".NET 6.0 not found"**: Update all .csproj files to target `net8.0` using the sed commands above
-3. **Package restore fails**: Ensure internet connectivity and run `dotnet restore` with longer timeout (60+ seconds)
-4. **Build warnings about XML documentation**: These are normal and expected, build will succeed
+2. **Package restore fails**: Ensure internet connectivity and run `dotnet restore` with longer timeout (60+ seconds)
+3. **Build warnings about XML documentation**: These are normal and expected, build will succeed
+4. **SYSLIB0014 warnings about WebRequest**: These are expected due to legacy API usage and do not affect functionality
 
 ### Automated validation script:
 For comprehensive validation of all build steps, create and run this script:
@@ -84,7 +78,7 @@ For comprehensive validation of all build steps, create and run this script:
 
 ### `amadeus/` - Main SDK Library
 - Core Amadeus SDK implementation
-- Targets .NET 6.0, builds to `amadeus-dotnet` NuGet package
+- Targets .NET 8.0 LTS, builds to `amadeus-dotnet` NuGet package
 - Entry point: `Amadeus.cs` with builder pattern
 - API structure mirrors Amadeus REST API paths
 
